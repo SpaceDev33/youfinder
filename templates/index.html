@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouFinder - Buscador Avançado do YouTube</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff0000;
+            --primary-hover: #cc0000;
+            --secondary-color: #0c1e35;
+            --accent-color: #3498db;
+            --dark-blue: #0c1e35;
+            --medium-blue: #1a365d;
+            --light-blue: #2c5282;
+            --very-light-blue: #ebf8ff;
+            --dark-text: #e6e6e6;
+            --light-text: #ffffff;
+            --card-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 40px 0;
+            color: var(--dark-text);
+        }
+
+        .container {
+            max-width: 900px;
+        }
+
+        .search-card {
+            background-color: var(--medium-blue);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .search-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+        }
+
+        .card-header {
+            background: var(--dark-blue);
+            color: var(--light-text);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        h1 {
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+            color: var(--light-text);
+        }
+
+        .card-body {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--light-text);
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: rgba(255,255,255,0.1);
+            color: var(--light-text);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.25);
+            background-color: rgba(255,255,255,0.15);
+        }
+
+        .form-text {
+            margin-top: 8px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .btn-search {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-search:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-search:active {
+            transform: translateY(0);
+        }
+
+        .btn-search i {
+            margin-right: 10px;
+        }
+
+        .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #ff8d85;
+        }
+
+        .feature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .feature-item {
+            background: var(--dark-blue);
+            border-radius: 10px;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--light-text);
+        }
+
+        .feature-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .input-group-text {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--accent-color);
+        }
+
+        /* Animação sutil de loader nos campos */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .is-loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 0;
+            }
+
+            .card-header, .card-body {
+                padding: 25px;
+            }
+
+            .feature-section {
+                flex-direction: column;
+            }
+
+            .logo-title {
+                flex-direction: column;
+                text-align: center;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-card">
+            <div class="card-header">
+                <div class="logo-title">
+                    <i class="fa-brands fa-youtube logo-icon"></i>
+                    <h1>YouFinder</h1>
+                </div>
+                <p class="mb-0">Buscador avançado para descobrir os melhores vídeos do YouTube com precisão</p>
+            </div>
+
+            <div class="card-body">
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form action="/search" method="POST" id="search-form">
+                    <div class="form-group">
+                        <label for="keywords" class="form-label">
+                            <i class="fas fa-tag me-2"></i>Palavras-chave
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="keywords" name="keywords" 
+                                placeholder="Ex: python, programação, desenvolvimento" required>
+                        </div>
+                        <div class="form-text">
+                            Separe as palavras por vírgulas. Encontraremos vídeos com qualquer uma delas no título.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="min_comments" class="form-label">
+                            <i class="fas fa-comments me-2"></i>Comentários recentes mínimos
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-comment-alt"></i></span>
+                            <input type="number" class="form-control" id="min_comments" name="min_comments" 
+                                value="5" min="0" required>
+                        </div>
+                        <div class="form-text">
+                            Apenas vídeos com pelo menos esse número de comentários nos últimos 30 dias serão exibidos.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="days_back" class="form-label">
+                            <i class="fas fa-calendar-alt me-2"></i>Período de comentários (dias)
+                        </label>
+                        <input type="number" class="form-control" id="days_back" name="days_back" 
+                            value="30" min="1" max="365" required>
+                    </div>
+                        <div class="form-text">
+                            Digite o ID da playlist para: 1) excluir vídeos já presentes nela dos resultados e 
+                            2) permitir adicionar novos vídeos a ela diretamente dos resultados.
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-search text-white">
+                            <i class="fas fa-search"></i>Buscar Vídeos
+                        </button>
+                    </div>
+                </form>
+
+                <div class="feature-section">
+                    <div class="feature-item">
+                        <i class="fas fa-filter feature-icon"></i>
+                        <h5 class="feature-title">Filtragem Inteligente</h5>
+                        <p class="feature-text">Encontre vídeos relevantes com alto engajamento nos últimos 30 dias</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-clock feature-icon"></i>
+                        <p class="feature-title">Busca Otimizada</p>
+                        <p class="feature-text">15 minutos de busca intensiva para encontrar o máximo de vídeos</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-plus-circle feature-icon"></i>
+                        <p class="feature-title">Adicione à Playlist</p>
+                        <p class="feature-text">Adicione vídeos diretamente à sua playlist com apenas um clique</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('search-form');
+            const formInputs = document.querySelectorAll('.form-control');
+            const submitButton = document.querySelector('.btn-search');
+
+            searchForm.addEventListener('submit', function(e) {
+                // Adicionar texto e ícone de carregamento ao botão
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Iniciando busca...';
+                submitButton.disabled = true;
+
+                // Adicionar efeito de loading nos inputs
+                formInputs.forEach(input => {
+                    input.classList.add('is-loading');
+                    input.readOnly = true;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

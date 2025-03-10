@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouFinder - Resultados da Busca</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff0000;
+            --primary-hover: #cc0000;
+            --secondary-color: #0c1e35;
+            --accent-color: #3498db;
+            --dark-blue: #0c1e35;
+            --medium-blue: #1a365d;
+            --light-blue: #2c5282;
+            --very-light-blue: #ebf8ff;
+            --dark-text: #e6e6e6;
+            --light-text: #ffffff;
+            --card-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            --border-radius: 12px;
+            --gray-100: rgba(255,255,255,0.1);
+            --gray-200: rgba(255,255,255,0.2);
+            --gray-300: rgba(255,255,255,0.3);
+            --gray-400: rgba(255,255,255,0.4);
+            --gray-500: rgba(255,255,255,0.5);
+            --gray-600: rgba(255,255,255,0.6);
+            --gray-700: rgba(255,255,255,0.7);
+            --gray-800: rgba(255,255,255,0.8);
+            --gray-900: rgba(255,255,255,0.9);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 100%);
+            min-height: 100vh;
+            padding: 30px 0 60px;
+            color: var(--dark-text);
+        }
+
+        .header-container {
+            background-color: var(--dark-blue);
+            color: var(--light-text);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--gray-100);
+        }
+
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .search-info {
+            background-color: var(--gray-100);
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+        }
+
+        .search-info strong {
+            color: #fff;
+            background-color: var(--gray-200);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+
+        .btn-new-search {
+            background-color: var(--gray-200);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+
+        .btn-new-search:hover {
+            background-color: var(--gray-300);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .results-count {
+            background-color: var(--medium-blue);
+            border-radius: var(--border-radius);
+            padding: 16px 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--gray-100);
+        }
+
+        .results-count .badge {
+            font-size: 1rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-right: 15px;
+            background-color: var(--primary-color);
+        }
+
+        .video-card {
+            background-color: var(--medium-blue);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            height: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--gray-100);
+        }
+
+        .video-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+        }
+
+        .video-card:hover .video-thumbnail::before {
+            opacity: 1;
+        }
+
+        .video-thumbnail {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .video-card:hover .video-thumbnail img {
+            transform: scale(1.05);
+        }
+
+        .video-thumbnail::before {
+            content: "\f144";
+            font-family: "Font Awesome 5 Free";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: white;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            z-index: 1;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .video-thumbnail::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 50%);
+        }
+
+        .video-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .video-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            color: var(--light-text);
+        }
+
+        .video-channel {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--gray-700);
+        }
+
+        .channel-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--gray-200);
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--light-text);
+        }
+
+        .video-stats {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--light-text);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .comment-badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .empty-results {
+            background-color: var(--medium-blue);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--gray-100);
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: var(--gray-400);
+            margin-bottom: 20px;
+        }
+
+        /* Botões de ação */
+        .video-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn-watch {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            flex: 1;
+            margin-right: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-watch:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-add-playlist {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            flex: 1;
+            margin-left: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-add-playlist:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-add-playlist.disabled {
+            background-color: var(--gray-300);
+            cursor: not-allowed;
+        }
+
+        /* Filtros */
+        .filters-bar {
+            background-color: var(--medium-blue);
+            border-radius: var(--border-radius);
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border: 1px solid var(--gray-100);
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-right: 5px;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-grow: 1;
+        }
+
+        .filter-dropdown {
+            min-width: 180px;
+            background-color: var(--dark-blue);
+            color: var(--light-text);
+            border: 1px solid var(--gray-200);
+        }
+
+        .filter-dropdown:focus {
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+        }
+
+        /* Toast para notificações */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .toast {
+            background-color: var(--dark-blue);
+            color: var(--light-text);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        .toast-header {
+            background-color: var(--medium-blue);
+            color: var(--light-text);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .toast-body {
+            padding: 15px;
+        }
+
+        /* Animação de carregamento para ação de adicionar à playlist */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
+
+        /* Animação de entrada dos cards */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .video-item {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @media (max-width: 768px) {
+            .header-container, 
+            .results-count, 
+            .filters-bar {
+                padding: 15px;
+            }
+
+            .logo-area {
+                flex-direction: column;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+
+            .search-info {
+                margin-bottom: 15px;
+            }
+
+            .video-thumbnail {
+                height: 160px;
+            }
+
+            .video-content {
+                padding: 15px;
+            }
+
+            .filter-controls {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho -->
+        <div class="header-container">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <div class="logo-area">
+                        <i class="fa-brands fa-youtube logo-icon"></i>
+                        <h2 class="mb-0">YouFinder</h2>
+                    </div>
+                    <div class="search-info">
+                        <i class="fas fa-search me-2"></i>
+                        <span>Palavras-chave: <strong>{{ keywords }}</strong> | 
+                        Comentários mínimos: <strong>{{ min_comments }}</strong>
+                        {% if playlist_id %}
+                        | Playlist: <strong>{{ playlist_id }}</strong>
+                        {% endif %}</span>
+                    </div>
+                </div>
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    {% if not session.youtube_token %}
+                    <a href="/login?search_id={{ request.args.get('search_id') }}" class="btn btn-new-search">
+                        <i class="fab fa-google me-2"></i>Login YouTube
+                    </a>
+                    {% endif %}
+                    <a href="/" class="btn btn-new-search">
+                        <i class="fas fa-redo me-2"></i>Nova Busca
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if videos %}
+            <!-- Contador de resultados -->
+            <div class="results-count">
+                <span class="badge">{{ videos|length }}</span>
+                <span>vídeos encontrados que atendem seus critérios</span>
+            </div>
+
+            <!-- Barra de filtros -->
+            <div class="filters-bar">
+                <div>
+                    <span class="filter-label"><i class="fas fa-sort me-2"></i>Ordenar por:</span>
+                </div>
+                <div class="filter-controls">
+                    <select class="form-select filter-dropdown" id="sort-filter">
+                        <option value="relevance">Relevância</option>
+                        <option value="comments-desc">Mais comentários</option>
+                        <option value="comments-asc">Menos comentários</option>
+                        <option value="views-desc">Mais visualizações</option>
+                        <option value="views-asc">Menos visualizações</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Grade de vídeos -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="videos-grid">
+                {% for video in videos %}
+                <div class="col video-item" 
+                     data-comments="{{ video.comments }}" 
+                     data-views="{{ video.viewCount|int }}">
+                    <div class="video-card">
+                        <a href="{{ video.url }}" target="_blank" class="video-thumbnail">
+                            <img src="{{ video.thumbnail }}" alt="{{ video.title }}">
+                        </a>
+                        <div class="video-content">
+                            <h5 class="video-title">{{ video.title }}</h5>
+                            <div class="video-channel">
+                                <div class="channel-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <span>{{ video.channel }}</span>
+                            </div>
+                            <div class="video-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">{{ "{:,}".format(video.viewCount|int).replace(',','.') }}</span>
+                                    <span class="stat-label">visualizações</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value comment-badge">{{ video.comments }}</span>
+                                    <span class="stat-label">comentários recentes</span>
+                                </div>
+                            </div>
+                            <div class="video-actions">
+                                <a href="{{ video.url }}" target="_blank" class="btn btn-watch">
+                                    <i class="fas fa-play me-2"></i>Assistir
+                                </a>
+                                {% if playlist_id %}
+                                <button class="btn btn-add-playlist" data-video-id="{{ video.id }}" data-video-title="{{ video.title }}">
+                                    <i class="fas fa-plus-circle me-2"></i>Adicionar à Playlist
+                                </button>
+                                {% else %}
+                                <button class="btn btn-add-playlist disabled" disabled title="Insira um ID de playlist para ativar esta função">
+                                    <i class="fas fa-plus-circle me-2"></i>Adicionar à Playlist
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Mensagem de nenhum resultado -->
+            <div class="empty-results">
+                <i class="fas fa-search empty-icon"></i>
+                <h3>Nenhum vídeo encontrado</h3>
+                <p class="text-muted mb-4">Não encontramos vídeos que atendam a todos os critérios especificados.</p>
+                <p>Sugestões:</p>
+                <ul class="text-start d-inline-block">
+                    <li>Verifique se as palavras-chave estão escritas corretamente</li>
+                    <li>Tente reduzir o número mínimo de comentários</li>
+                    <li>Experimente usar palavras-chave mais populares</li>
+                    <li>Verifique se o ID da playlist está correto</li>
+                </ul>
+                <div class="mt-4">
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-redo me-2"></i>Tentar Novamente
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Toast para notificações -->
+    <div class="toast-container">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="notification-toast">
+            <div class="toast-header">
+                <i class="fas fa-bell me-2"></i>
+                <strong class="me-auto" id="toast-title">Notificação</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const playlistId = "{{ playlist_id }}";
+            const toastElement = document.getElementById('notification-toast');
+            const toast = new bootstrap.Toast(toastElement, {delay: 5000});
+            const toastTitle = document.getElementById('toast-title');
+            const toastMessage = document.getElementById('toast-message');
+
+            // Função para ordenar os vídeos
+            function sortVideos(sortBy) {
+                const videosGrid = document.getElementById('videos-grid');
+                const videoItems = Array.from(document.querySelectorAll('.video-item'));
+
+                videoItems.sort((a, b) => {
+                    if (sortBy === 'comments-desc') {
+                        return parseInt(b.dataset.comments) - parseInt(a.dataset.comments);
+                    } else if (sortBy === 'comments-asc') {
+                        return parseInt(a.dataset.comments) - parseInt(b.dataset.comments);
+                    } else if (sortBy === 'views-desc') {
+                        return parseInt(b.dataset.views) - parseInt(a.dataset.views);
+                    } else if (sortBy === 'views-asc') {
+                        return parseInt(a.dataset.views) - parseInt(b.dataset.views);
+                    }
+                    // Para relevância, manter a ordem original
+                    return 0;
+                });
+
+                // Remover todos os vídeos e adicioná-los na nova ordem
+                videoItems.forEach(item => videosGrid.appendChild(item));
+            }
+
+            // Ativar seletor de ordenação
+            const sortFilter = document.getElementById('sort-filter');
+            if (sortFilter) {
+                sortFilter.addEventListener('change', function() {
+                    sortVideos(this.value);
+                });
+            }
+
+            // Adicionar evento para botões de adicionar à playlist
+            const addToPlaylistButtons = document.querySelectorAll('.btn-add-playlist:not(.disabled)');
+            addToPlaylistButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const videoId = this.dataset.videoId;
+                    const videoTitle = this.dataset.videoTitle;
+
+                    // Mostrar loader no botão
+                    const originalContent = this.innerHTML;
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adicionando...';
+                    this.disabled = true;
+
+                    fetch('/add_to_playlist', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `video_id=${videoId}&playlist_id=${playlistId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Sucesso
+                            toastTitle.textContent = 'Sucesso!';
+                            toastMessage.textContent = `Vídeo "${videoTitle}" adicionado à playlist.`;
+                            toastElement.classList.remove('bg-danger');
+                            toastElement.classList.add('bg-success');
+
+                            // Atualizar botão
+                            this.innerHTML = '<i class="fas fa-check me-2"></i>Adicionado';
+                            this.classList.remove('btn-add-playlist');
+                            this.classList.add('btn-success');
+                            this.disabled = true;
+                        } else {
+                            // Erro
+                            toastTitle.textContent = 'Erro';
+                            toastMessage.textContent = data.message || 'Ocorreu um erro ao adicionar o vídeo à playlist.';
+                            toastElement.classList.remove('bg-success');
+                            toastElement.classList.add('bg-danger');
+
+                            // Restaurar botão
+                            this.innerHTML = originalContent;
+                            this.disabled = false;
+                        }
+
+                        toast.show();
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+
+                        // Erro
+                        toastTitle.textContent = 'Erro';
+                        toastMessage.textContent = 'Ocorreu um erro ao adicionar o vídeo à playlist.';
+                        toastElement.classList.remove('bg-success');
+                        toastElement.classList.add('bg-danger');
+
+                        // Restaurar botão
+                        this.innerHTML = originalContent;
+                        this.disabled = false;
+
+                        toast.show();
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
