@@ -1,0 +1,8 @@
+flask==2.3.2
+celery==5.3.4
+redis==4.6.0
+flask-caching==2.1.0
+authlib==1.2.0
+google-api-python-client==2.104.0
+gunicorn==21.2.0
+kombu==5.3.4
