@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: youfinder-web
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: REDIS_URL
+        fromDatabase:
+          name: youfinder-redis
+          property: connectionString
+      - key: GOOGLE_CLIENT_ID
+        value: seu-client-id  # Substitua pelo seu Client ID do Google
+      - key: GOOGLE_CLIENT_SECRET
+        value: seu-client-secret  # Substitua pelo seu Client Secret do Google
+      - key: SECRET_KEY
+        generateValue: true  # Gera uma chave secreta automaticamente
+    healthCheckPath: /health  # Endpoint para monitoramento
+
+  - type: worker
+    name: youfinder-celery
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A app.celery worker --loglevel=info
+    envVars:
+      - key: REDIS_URL
+        fromDatabase:
+          name: youfinder-redis
+          property: connectionString
+      - key: GOOGLE_CLIENT_ID
+        value: seu-client-id  # Mesmo Client ID do serviço web
+      - key: GOOGLE_CLIENT_SECRET
+        value: seu-client-secret  # Mesmo Client Secret do serviço web
+
+databases:
+  - name: youfinder-redis
+    type: redis
+    plan: free  # Plano gratuito para testes
